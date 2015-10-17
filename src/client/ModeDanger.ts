@@ -12,7 +12,7 @@ function saturate(x: number): number { return x < 0 ? 0 : (x > 1 ? 1 : x); }
 
 export class ModeDanger extends Mode
 {
-	private detectors: { description: string, dangerLevel: () => number }[] = [];
+	private detectors: { description: string; dangerLevel: () => number }[] = [];
 	
 	public constructor(env: Environment)
 	{
@@ -23,10 +23,14 @@ export class ModeDanger extends Mode
 		});
 		this.detectors.push({
 			description: "suspicious sounds",
-			dangerLevel: () => Math.random()
+			dangerLevel: () => { /*this.env.getAudioFrequencies();*/ return 0; }
 		});
 		this.detectors.push({
 			description: "suspicious movement",
+			dangerLevel: () => Math.random()
+		});
+		this.detectors.push({
+			description: "SOS button",
 			dangerLevel: () => Math.random()
 		});
 	}
@@ -51,6 +55,9 @@ export class ModeDanger extends Mode
 			x
 				.css("background-color", "rgb(" + (saturate(level * 2) * 85 | 0) + ", " + (saturate(2 - level * 2) * 85 | 0) + ", 0)")
 				.css("line-height", x.height() + "px");
+				
+			if (i == 1)
+				x.css("font-family", "monospace").css("font-size", "10px").text(this.env.getAudioFrequencies().reduce((a, b) => a + b, 0) + " : " + this.env.getAudioFrequencies().reduce((a,b) => a + String.fromCharCode((b / 50 | 0) + 65), ""));
 		});
 	}
 

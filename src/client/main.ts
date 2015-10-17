@@ -3,6 +3,7 @@
 /// <reference path="../decls/socket.io-client.d.ts" />
 /// <reference path="../shared/include.ts" />
 /// <reference path="../decls/webrtc/MediaStream.d.ts" />
+/// <reference path="../decls/webaudioapi/waa.d.ts" />
 
 import $ = require("jquery");
 
@@ -52,12 +53,31 @@ $(() => {
     video.height = vHeight;
     
 
-    navigator.getUserMedia({ video: true }, 
+    navigator.getUserMedia({ video: true, audio: true }, 
         stream => 
         {
             video.onloadedmetadata = ev =>
             {
-                main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video));
+                var AudioContext: AudioContextConstructor = window.AudioContext || (<any>window).webkitAudioContext;
+                var audioContext = new AudioContext();
+                
+                var inputPoint = audioContext.createGain();
+
+                // Create an AudioNode from the stream.
+                var realAudioInput = audioContext.createMediaStreamSource(stream);
+                var audioInput = realAudioInput;
+                audioInput.connect(inputPoint);
+            
+                var analyserNode = audioContext.createAnalyser();
+                analyserNode.fftSize = 256;
+                inputPoint.connect( analyserNode );
+                
+                var zeroGain = audioContext.createGain();
+                zeroGain.gain.value = 0.0;
+                inputPoint.connect( zeroGain );
+                zeroGain.connect( audioContext.destination );
+                
+                main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video, analyserNode));
             };
             video.src = window.URL.createObjectURL(stream);
             video.play();
