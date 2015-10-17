@@ -6,6 +6,23 @@
 
 import $ = require("jquery");
 
+import EnvironmentTS = require("Environment");
+type Environment = EnvironmentTS.Environment;
+var Environment = EnvironmentTS.Environment;
+
+import ModeTS = require("Mode");
+type Mode = ModeTS.Mode;
+var Mode = ModeTS.Mode;
+
+import ModeVideoFilterRedFlashTS = require("ModeVideoFilterRedFlash");
+var ModeVideoFilterRedFlash = ModeVideoFilterRedFlashTS.ModeVideoFilterRedFlash;
+
+import ModeVideoFilterSimRGTS = require("ModeVideoFilterSimRG");
+var ModeVideoFilterSimRG = ModeVideoFilterSimRGTS.ModeVideoFilterSimRG;
+
+import ModeVideoFilterSimCBTS = require("ModeVideoFilterSimCB");
+var ModeVideoFilterSimCB = ModeVideoFilterSimCBTS.ModeVideoFilterSimCB;
+
 document.body.requestFullscreen = 
     document.body.requestFullscreen || 
     document.body.webkitRequestFullscreen || 
@@ -17,70 +34,102 @@ navigator.getUserMedia =
     navigator.mozGetUserMedia || 
     navigator.msGetUserMedia;
 
-// HELPERS
-function getTimeMs(): number { return Date.now(); }
-function saturate(x: number): number { return x < 0 ? 0 : (x > 1 ? 1 : x); }
-
-var vWidth: number = 1200;
-var vHeight: number = 900;
-
 // INIT
 $(() => {
+    var vWidth: number = 320;
+    var vHeight: number = 240;
     var video = <HTMLVideoElement>$("#inputVideo")[0];
     video.width = vWidth;
     video.height = vHeight;
-    var canvas = <HTMLCanvasElement>$("#outputVideo")[0];
-    canvas.width = vWidth;
-    canvas.height = vHeight;
+    
 
     navigator.getUserMedia({ video: true }, 
         stream => 
         {
+            video.onloadedmetadata = ev =>
+            {
+                main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video));
+            };
             video.src = window.URL.createObjectURL(stream);
             video.play();
-            main(canvas.getContext("2d"), video);
         }, 
         error => 
         {
-            window.alert("COULD NOT SETUP VIDEO INPUT; " + error);
+            //environment.videoInput = null;
+            //main(environment);
+            window.alert(error);
         });
 });
 
 // CALLED WHEN READY
-function main(context: CanvasRenderingContext2D, inputVideo: HTMLVideoElement)
+function main(environment: Environment)
 {
-    $("body").click(() => document.body.requestFullscreen());
+    var body = $("body");
     
-    setInterval(() => {        
-        context.drawImage(inputVideo, 0, 0, vWidth, vHeight);
-        var imageData = context.getImageData(0, 0, vWidth, vHeight);
-        processImage(imageData);
-        context.putImageData(imageData, 0, 0);
-    }, 20);
-}
-
-function processImage(imageData: ImageData)
-{
-    var time = getTimeMs();
-    var pulse = Math.abs((time / 300) % 2 - 1); // [0..1] continuously
-
-    var raw = imageData.data;
-    for (var y = 0, i = 0; y < imageData.height; ++y)
-        for (var x = 0; x < imageData.width; ++x, i += 4)
+    // MODES
+    var modes: Mode[] = [
+        new ModeVideoFilterRedFlash(environment),
+        new ModeVideoFilterSimRG(environment),
+        new ModeVideoFilterSimCB(environment),
+    ];
+    var mode: Mode = null;
+    var wrapper = $("<div>");
+    
+    var modeIndex = 0;
+    var transition = (index: number) =>
+    {
+        modeIndex = ((index % modes.length) + modes.length) % modes.length;
+        
+        var oldWrapper = wrapper;
+        wrapper = $("<div>").appendTo(body).addClass("modeWrapper").hide();
+        mode = modes[modeIndex];
+        mode.init(wrapper);
+        document.title = mode.getTitle();
+        
+        // replace GUI
+        oldWrapper.fadeOut(undefined, () =>
         {
-            var r = raw[i + 0];
-            var g = raw[i + 1];
-            var b = raw[i + 2];
-            
-            var notRed = Math.max(g, b / 2);
-            var redness = saturate((r - notRed - 40) / (r + 1));
-            var flashFactor = 1 + (pulse - 0.5) * 1.7 * redness;
-            r *= flashFactor;
-            g *= flashFactor;
-            b *= flashFactor;
-            
-            raw[i + 0] = r;
-            raw[i + 1] = g;
-            raw[i + 2] = b;
-        }
+            oldWrapper.remove();
+            wrapper.fadeIn();
+        });
+    };
+    
+    // HACK: make every fast (guess: firefox caller-dependent optimization)
+    for (var i = 0; i < modes.length; i++)
+    {
+        transition(i);
+        mode.update();
+    }
+    
+    // SWIPE EVENTS
+    var xThresh = 50;
+    var off = () => body.off("mousemove touchmove");
+    body.on("mousedown touchstart", eo => {
+        var startX = eo.pageX || (<any>eo.originalEvent).changedTouches[0].pageX;
+        body.on("mousemove touchmove", eo =>
+        {
+            var currX = eo.pageX || (<any>eo.originalEvent).changedTouches[0].pageX;
+            var deltaX = currX - startX;
+            if (deltaX < -xThresh)
+            {
+                transition(modeIndex - 1);
+                off();
+            }
+            if (deltaX > xThresh)
+            {
+                transition(modeIndex + 1);
+                off();
+            }
+        });
+    });
+    body.on("mouseup touchend", () => off());
+    
+
+    body.dblclick(() => document.body.requestFullscreen());
+    
+    setInterval(() => 
+    {
+        wrapper.css("width", Math.min($(window).width(), $(window).height() * environment.size.x / environment.size.y) + "px");
+        mode.update();
+    }, 10);
 }
