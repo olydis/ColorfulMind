@@ -1,0 +1,6 @@
+-target ES5
+--noImplicitAny
+--removeComments
+--module commonjs
+--outDir build/server
+src/server/main.ts

@@ -1,0 +1,6 @@
+-target ES5
+--noImplicitAny
+--removeComments
+--module amd
+--outDir build/client
+src/client/main.ts
