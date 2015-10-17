@@ -76,6 +76,12 @@ function main(environment: Environment)
     var wrapper = $("<div>");
     
     var modeIndex = 0;
+    var flashCaption = () =>
+    {
+        var caption = $(".modeCaption");
+        caption.show();
+        setTimeout(() => caption.fadeOut(), 3000);
+    };
     var transition = (index: number) =>
     {
         modeIndex = ((index % modes.length) + modes.length) % modes.length;
@@ -84,13 +90,15 @@ function main(environment: Environment)
         wrapper = $("<div>").appendTo(body).addClass("modeWrapper").hide();
         mode = modes[modeIndex];
         mode.init(wrapper);
+        // handle caption
         document.title = mode.getTitle();
+        wrapper.append($("<span>").addClass("modeCaption").text(mode.getTitle()));
         
         // replace GUI
         oldWrapper.fadeOut(undefined, () =>
         {
             oldWrapper.remove();
-            wrapper.fadeIn();
+            wrapper.fadeIn(undefined, () => flashCaption());
         });
     };
     
@@ -126,6 +134,7 @@ function main(environment: Environment)
     
 
     body.dblclick(() => document.body.requestFullscreen());
+    body.click(() => flashCaption());
     
     setInterval(() => 
     {
