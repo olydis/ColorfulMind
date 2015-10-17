@@ -10,19 +10,34 @@ var Mode = ModeTS.Mode;
 
 export class ModeDanger extends Mode
 {
+	private detectors: { description: string, dangerLevel: () => number }[] = [];
+	
 	public constructor(env: Environment)
 	{
 		super(env);
+		this.detectors.push({
+			description: "dummy",
+			dangerLevel: () => Math.random() * 3 | 0
+		});
 	}
 
 	public init(container: JQuery): void
 	{
-		
+		this.detectors.forEach(detector =>
+		{
+			var panel = $("<p>").addClass("detectorPanel");
+			panel.css("height", ((100 / this.detectors.length) | 0) + "%");
+			panel.text(detector.description);
+			container.append(panel);
+		});
 	}
 	
 	public update(): void
 	{
-		
+		this.detectors.forEach((detector, i) =>
+		{
+			$("p.detectorPanel").eq(i).removeClass("detectorPanel0 detectorPanel1 detectorPanel2").addClass("detectorPanel" + detector.dangerLevel());
+		});
 	}
 
 	public getTitle(): string

@@ -1,0 +1,42 @@
+body
+{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    overflow: hidden;
+}
+#inputVideo
+{
+    visibility: hidden;
+    display: none;
+}
+
+canvas
+{
+    width: 100%;
+}
+
+.modeWrapper
+{
+    display: inline-block;
+    width: 0px;
+    position: relative;
+}
+.modeCaption
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    font-family: sans-serif;
+    font-size: 30px;
+    width: 100%;
+    padding: 30px;
+}
+.detectorPanel
+{
+    width: 100%;
+    display: inline-block;
+}
