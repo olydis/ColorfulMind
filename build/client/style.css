@@ -38,5 +38,25 @@ canvas
 .detectorPanel
 {
     width: 100%;
+    box-sizing: border-box;
     display: inline-block;
+    font-size: 50px;
+    color: white;
+    font-family: sans-serif;
+    padding: 30% 30px 30% 30px;
+    border: 20px solid #111;
+    margin: 0;
+    border-radius: 30px;
+}
+.detectorPanel0
+{
+    background-color: #005500;
+}
+.detectorPanel1
+{
+    background-color: #555500;
+}
+.detectorPanel2
+{
+    background-color: #550000;
 }

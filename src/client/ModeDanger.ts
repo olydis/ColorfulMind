@@ -16,7 +16,15 @@ export class ModeDanger extends Mode
 	{
 		super(env);
 		this.detectors.push({
-			description: "dummy",
+			description: "suspicious acceleration",
+			dangerLevel: () => Math.random() * 3 | 0
+		});
+		this.detectors.push({
+			description: "suspicious sounds",
+			dangerLevel: () => Math.random() * 3 | 0
+		});
+		this.detectors.push({
+			description: "suspicious movement",
 			dangerLevel: () => Math.random() * 3 | 0
 		});
 	}
