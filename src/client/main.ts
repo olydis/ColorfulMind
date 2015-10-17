@@ -14,14 +14,18 @@ import ModeTS = require("Mode");
 type Mode = ModeTS.Mode;
 var Mode = ModeTS.Mode;
 
+// fix color vision
+import ModeVideoFilterLinear = require("ModeVideoFilterLinear");
+var ModeVideoFilterContrast = ModeVideoFilterLinear.ModeVideoFilterContrast;
+var ModeVideoFilterSimCB = ModeVideoFilterLinear.ModeVideoFilterSimCB;
+var ModeVideoFilterSimRG = ModeVideoFilterLinear.ModeVideoFilterSimRG;
+
+import ModeDangerTS = require("ModeDanger");
+var ModeDanger = ModeDangerTS.ModeDanger;
+
 import ModeVideoFilterRedFlashTS = require("ModeVideoFilterRedFlash");
 var ModeVideoFilterRedFlash = ModeVideoFilterRedFlashTS.ModeVideoFilterRedFlash;
 
-import ModeVideoFilterSimRGTS = require("ModeVideoFilterSimRG");
-var ModeVideoFilterSimRG = ModeVideoFilterSimRGTS.ModeVideoFilterSimRG;
-
-import ModeVideoFilterSimCBTS = require("ModeVideoFilterSimCB");
-var ModeVideoFilterSimCB = ModeVideoFilterSimCBTS.ModeVideoFilterSimCB;
 
 document.body.requestFullscreen = 
     document.body.requestFullscreen || 
@@ -33,6 +37,11 @@ navigator.getUserMedia =
     navigator.webkitGetUserMedia || 
     navigator.mozGetUserMedia || 
     navigator.msGetUserMedia;
+
+function vibrate(duration: number = 200)
+{
+    (<any>navigator).vibrate && (<any>navigator).vibrate(duration);
+}
 
 // INIT
 $(() => {
@@ -68,9 +77,12 @@ function main(environment: Environment)
     
     // MODES
     var modes: Mode[] = [
+        new ModeDanger(environment),
         new ModeVideoFilterRedFlash(environment),
+        //new ModeVideoFilterContrast(environment),
         new ModeVideoFilterSimRG(environment),
-        new ModeVideoFilterSimCB(environment),
+        //new ModeVideoFilterSimCB(environment),
+        //new ModeVideoOverlayArrow(environment),
     ];
     var mode: Mode = null;
     var wrapper = $("<div>");
@@ -90,6 +102,7 @@ function main(environment: Environment)
         wrapper = $("<div>").appendTo(body).addClass("modeWrapper").hide();
         mode = modes[modeIndex];
         mode.init(wrapper);
+        
         // handle caption
         document.title = mode.getTitle();
         wrapper.append($("<span>").addClass("modeCaption").text(mode.getTitle()));
@@ -97,6 +110,7 @@ function main(environment: Environment)
         // replace GUI
         oldWrapper.fadeOut(undefined, () =>
         {
+            vibrate();
             oldWrapper.remove();
             wrapper.fadeIn(undefined, () => flashCaption());
         });
@@ -105,9 +119,13 @@ function main(environment: Environment)
     // HACK: make every fast (guess: firefox caller-dependent optimization)
     for (var i = 0; i < modes.length; i++)
     {
-        transition(i);
+        wrapper.remove();
+        wrapper = $("<div>").appendTo(body).addClass("modeWrapper").hide();
+        mode = modes[i];
+        mode.init(wrapper);
         mode.update();
     }
+    transition(0);
     
     // SWIPE EVENTS
     var xThresh = 50;
@@ -133,12 +151,12 @@ function main(environment: Environment)
     body.on("mouseup touchend", () => off());
     
 
-    body.dblclick(() => document.body.requestFullscreen());
-    body.click(() => flashCaption());
+    body.click(() => { document.body.requestFullscreen(); flashCaption();  });
     
     setInterval(() => 
     {
         wrapper.css("width", Math.min($(window).width(), $(window).height() * environment.size.x / environment.size.y) + "px");
+        wrapper.css("height", Math.min($(window).width() * environment.size.y / environment.size.x, $(window).height()) + "px");
         mode.update();
     }, 10);
 }

@@ -22,7 +22,7 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 	public processImage(imageData: ImageData)
 	{
 		var time = getTimeMs();
-		var pulse = Math.abs((time / 300) % 2 - 1); // [0..1] continuously
+		var pulse = time / 300 % 2 < 1 ? 1 : 0; // Math.abs((time / 300) % 2 - 1); // [0..1]
 	
 		var raw = imageData.data;
 		for (var y = 0, i = 0; y < imageData.height; ++y)
@@ -33,11 +33,10 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 				var b = raw[i + 2];
 				
 				var notRed = Math.max(g, b / 2);
-				var redness = saturate((r - notRed - 40) / (r + 1));
-				var flashFactor = 1 + (pulse - 0.5) * 1.7 * redness;
-				r *= flashFactor;
-				g *= flashFactor;
-				b *= flashFactor;
+				var redness = saturate((r - notRed - 20) / (r + 1));
+				r *= 1 + (pulse - 0.5) * 1.7 * redness;
+				g *= 1 - pulse * 0.7 * redness;
+				b *= 1 - pulse * 0.7 * redness;
 				
 				raw[i + 0] = r;
 				raw[i + 1] = g;
@@ -47,6 +46,6 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 	
 	public getTitle(): string
 	{
-		return "red flash";
+		return "red emphasis";
 	}
 }
