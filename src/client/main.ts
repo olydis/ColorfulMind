@@ -27,6 +27,8 @@ var ModeDanger = ModeDangerTS.ModeDanger;
 import ModeVideoFilterRedFlashTS = require("ModeVideoFilterRedFlash");
 var ModeVideoFilterRedFlash = ModeVideoFilterRedFlashTS.ModeVideoFilterRedFlash;
 
+import ModeGameTS = require("ModeGame");
+var ModeGame = ModeGameTS.ModeGame;
 
 document.body.requestFullscreen = 
     document.body.requestFullscreen || 
@@ -105,6 +107,7 @@ function main(environment: Environment)
         new ModeVideoFilterSimRG(environment),
         new ModeVideoFilterSimCB(environment),
         new ModeDanger(environment),
+        new ModeGame(environment)
     ];
     var mode: Mode = null;
     var wrapper = $("<div>");
@@ -141,7 +144,7 @@ function main(environment: Environment)
     };
     
     // HACK: make every mode fast (guess: firefox caller-dependent optimization)
-    $("audio").each((i, e: HTMLAudioElement) => e.muted = true);
+    $("audio").each((i: number, e: HTMLAudioElement) => e.muted = true);
     for (var i = 0; i < modes.length; i++)
     {
         wrapper.remove();
