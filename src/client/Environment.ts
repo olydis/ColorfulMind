@@ -60,10 +60,13 @@ export class Environment
         });
 	}
 	
-	public getAudioFrequencies(): Uint8Array
+	public getLoudness(): number
 	{
 		this.analyserNode.getByteFrequencyData(this.freqByteData);
-		return this.freqByteData;
+        var freqs = this.freqByteData; 
+        var sum = freqs.reduce((a,b) => a+b, 0);
+        var high = freqs.slice(freqs.length / 2).reduce((a,b) => a + (b / 50 | 0), 0);
+        return (sum > 10000 ? 0.5 : 0) + (high > 5 ? 0.5 : 0);
 	}
 
     public getAccelDanger(): number

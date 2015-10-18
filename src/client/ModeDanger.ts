@@ -17,6 +17,8 @@ export class ModeDanger extends Mode
 	public constructor(env: Environment)
 	{
 		super(env);
+		
+		var movingLoudness: number = 0;
 		this.detectors.push({
 			description: "suspicious acceleration",
 			dangerLevel: () => env.getAccelDanger()
@@ -25,10 +27,9 @@ export class ModeDanger extends Mode
 			description: "suspicious sounds",
 			dangerLevel: () => 
 			{ 
-				var freqs = this.env.getAudioFrequencies(); 
-				var sum = freqs.reduce((a,b) => a+b, 0);
-				var high = freqs.slice(freqs.length / 2).reduce((a,b) => a + (b / 50 | 0), 0);
-				return (sum > 10000 ? 0.5 : 0) + (high > 5 ? 0.5 : 0);
+				var loudness = this.env.getLoudness(); 
+				movingLoudness = Math.max(movingLoudness - 0.001, 0, loudness);
+				return movingLoudness;
 			}
 		});
 		this.detectors.push({
@@ -78,10 +79,10 @@ export class ModeDanger extends Mode
 				.css("background-color", "rgb(" + (saturate(level * 2) * 85 | 0) + ", " + (saturate(2 - level * 2) * 85 | 0) + ", 0)")
 				.css("line-height", x.height() + "px");
 				
-			if (i == 1)
-				x.css("font-family", "monospace").css("font-size", "10px").text(this.env.getAudioFrequencies().reduce((a, b) => a + b, 0) + " : " + this.env.getAudioFrequencies().reduce((a,b) => a + String.fromCharCode((b / 50 | 0) + 65), ""));
-			if (i == 2)
-				x.css("font-family", "monospace").css("font-size", "10px").text(JSON.stringify(this.env.latLong));
+			//if (i == 1)
+			//	x.css("font-family", "monospace").css("font-size", "10px").text(this.env.getAudioFrequencies().reduce((a, b) => a + b, 0) + " : " + this.env.getAudioFrequencies().reduce((a,b) => a + String.fromCharCode((b / 50 | 0) + 65), ""));
+			//if (i == 2)
+			//	x.css("font-family", "monospace").css("font-size", "10px").text(JSON.stringify(this.env.latLong));
 		});
 		if (totalDanger > 1.9)
 			this.env.vibrate(50);
