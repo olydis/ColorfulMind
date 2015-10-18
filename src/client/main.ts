@@ -51,8 +51,6 @@ $(() => {
     var video = <HTMLVideoElement>$("#inputVideo")[0];
     video.width = vWidth;
     video.height = vHeight;
-
-    $("body").append($("<div>").text(!navigator.getUserMedia).css("color", "white"));
     
     if (!navigator.getUserMedia) {
         main(new Environment({x: 300, y: 500}, undefined, undefined));

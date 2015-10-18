@@ -61,13 +61,20 @@ export class Environment
 
     public getAccelDanger(): number
     {
+        if (this.accelWindow.length == 0) return 0;
+        
         var sum = 0;
         for (var i = 0; i < this.accelWindow.length; ++i)
             sum += this.accelWindow[i];
         sum /= this.accelWindow.length;
 
-        if (sum > 0.99) this.cntover99++;
+        var ret = 1-Math.min(1, sum);
 
-        return 1-Math.min(1, sum);
+        if (ret > 0.98) this.cntover99++;
+        else if (this.cntover99 > 300) { this.cntover99 = 0; this.accelWindow = []; }
+
+        if (this.cntover99 > 300) return Math.max(0, ret - (this.cntover99 - 300)/300);
+
+        return ret;
     }
 }

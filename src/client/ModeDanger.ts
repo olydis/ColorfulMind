@@ -69,7 +69,8 @@ export class ModeDanger extends Mode
 			var x = $("p.detectorPanel").eq(i);
 			x
 				.css("background-color", "rgb(" + (saturate(level * 2) * 85 | 0) + ", " + (saturate(2 - level * 2) * 85 | 0) + ", 0)")
-				.css("line-height", x.height() + "px");
+				.css("line-height", x.height() + "px")
+				.text("" + detector.dangerLevel().toFixed(5));
 				
 			if (i == 1)
 				x.css("font-family", "monospace").css("font-size", "10px").text(this.env.getAudioFrequencies().reduce((a, b) => a + b, 0) + " : " + this.env.getAudioFrequencies().reduce((a,b) => a + String.fromCharCode((b / 50 | 0) + 65), ""));
