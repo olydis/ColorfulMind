@@ -18,6 +18,15 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 	{
 		super(env);
 	}
+	
+	private sensitivity: number;
+	
+	public init(container: JQuery): void
+	{
+		super.init(container);
+		this.sensitivity = 0.5;
+		container.click(eo => this.sensitivity = eo.pageX / container.width());
+	}
 
 	public processImage(imageData: ImageData)
 	{
@@ -33,7 +42,7 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 				var b = raw[i + 2];
 				
 				var notRed = Math.max(g, b / 2);
-				var redness = saturate((r - notRed - 20) / (r + 1));
+				var redness = saturate((r - notRed - 20) / (r + 1)) * this.sensitivity;
 				r *= 1 + (pulse - 0.5) * 3.7 * redness;
 				g *= 1 - pulse * 0.9 * redness;
 				b *= 1 - pulse * 0.9 * redness;

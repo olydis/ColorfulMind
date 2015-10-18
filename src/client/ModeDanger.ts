@@ -20,11 +20,11 @@ export class ModeDanger extends Mode
 		
 		var movingLoudness: number = 0;
 		this.detectors.push({
-			description: "suspicious acceleration",
+			description: "acceleration",
 			dangerLevel: () => env.getAccelDanger()
 		});
 		this.detectors.push({
-			description: "suspicious sounds",
+			description: "sound",
 			dangerLevel: () => 
 			{ 
 				var loudness = this.env.getLoudness(); 
@@ -33,7 +33,7 @@ export class ModeDanger extends Mode
 			}
 		});
 		this.detectors.push({
-			description: "suspicious movement",
+			description: "location",
 			dangerLevel: () => {
 				var danger: Vector2D = { x: 8.6506698, y: 53.1681188 };
 				var loc: Vector2D = this.env.latLong;
@@ -42,7 +42,7 @@ export class ModeDanger extends Mode
 			}
 		});
 		this.detectors.push({
-			description: "SOS button",
+			description: "manual",
 			dangerLevel: () => 0
 		});
 	}
