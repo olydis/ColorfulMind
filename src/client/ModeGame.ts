@@ -77,7 +77,7 @@ export class ModeGame extends Mode
 
         if (this.myDx == this.nextBoxDx) {
             if (boxDst < 0) { // HIT! -> gameover
-                alert("Game over: " + this.points);
+                alert("Game over: " + this.points + " points");
                 this.container.children().remove();
                 this.init(this.container); 
             } else {
@@ -88,7 +88,7 @@ export class ModeGame extends Mode
 		this.env.playSound("sndBing");
                 this.points++;
                 this.nextBoxDx = this.getRandTrack();
-                this.nextBoxY = this.currY + 100 * (0.1 + Math.random());
+                this.nextBoxY = this.currY + 100 * (0.3 + Math.random());
             }
             this.song.volume = 1;
         }
