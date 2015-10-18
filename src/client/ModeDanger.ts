@@ -42,6 +42,12 @@ export class ModeDanger extends Mode
 			}
 		});
 		this.detectors.push({
+			description: "running",
+			dangerLevel: () => {
+				return Math.min(1, this.env.speed / 16);
+			}
+		});
+		this.detectors.push({
 			description: "manual",
 			dangerLevel: () => 0
 		});
