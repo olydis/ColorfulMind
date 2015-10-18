@@ -77,4 +77,9 @@ export class Environment
 
         return 1-Math.min(1, sum);
     }
+    
+    public vibrate(duration: number = 200): void
+    {
+        (<any>navigator).vibrate && (<any>navigator).vibrate(duration);
+    }
 }

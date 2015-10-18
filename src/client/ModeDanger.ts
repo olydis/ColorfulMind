@@ -37,7 +37,7 @@ export class ModeDanger extends Mode
 				var danger: Vector2D = { x: 8.6506698, y: 53.1681188 };
 				var loc: Vector2D = this.env.latLong;
 				var delta = { x: danger.x - loc.x, y: danger.y - loc.y };
-				return 1 - (delta.x * delta.x + delta.y * delta.y) * 1000;
+				return 1 - (delta.x * delta.x + delta.y * delta.y) * 10000;
 			}
 		});
 		this.detectors.push({
@@ -68,9 +68,11 @@ export class ModeDanger extends Mode
 	
 	public update(): void
 	{
+		var totalDanger: number = 0;
 		this.detectors.forEach((detector, i) =>
 		{
 			var level = detector.dangerLevel();
+			totalDanger += level;
 			var x = $("p.detectorPanel").eq(i);
 			x
 				.css("background-color", "rgb(" + (saturate(level * 2) * 85 | 0) + ", " + (saturate(2 - level * 2) * 85 | 0) + ", 0)")
@@ -81,6 +83,8 @@ export class ModeDanger extends Mode
 			if (i == 2)
 				x.css("font-family", "monospace").css("font-size", "10px").text(JSON.stringify(this.env.latLong));
 		});
+		if (totalDanger > 1.9)
+			this.env.vibrate(50);
 	}
 
 	public getTitle(): string

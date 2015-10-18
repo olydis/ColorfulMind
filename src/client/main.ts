@@ -39,11 +39,6 @@ navigator.getUserMedia =
     navigator.mozGetUserMedia || 
     navigator.msGetUserMedia;
 
-function vibrate(duration: number = 200)
-{
-    (<any>navigator).vibrate && (<any>navigator).vibrate(duration);
-}
-
 // INIT
 $(() => {
     var vWidth: number = 320;
@@ -134,7 +129,7 @@ function main(environment: Environment)
         // replace GUI
         oldWrapper.fadeOut(undefined, () =>
         {
-            vibrate();
+            environment.vibrate();
             oldWrapper.remove();
             wrapper.fadeIn(undefined, () => flashCaption());
         });
@@ -175,7 +170,7 @@ function main(environment: Environment)
     body.on("mouseup touchend", () => off());
     
 
-    body.click(() => { document.body.requestFullscreen(); flashCaption(); });
+    body.click(() => { document.body.requestFullscreen();/* flashCaption();*/ });
     
     setInterval(() => 
     {
