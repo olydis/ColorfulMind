@@ -65,6 +65,7 @@ export class ModeGame extends Mode
                 this.env.vibrate(100);
             }
         });
+		this.env.playSound("sndGameMode");
     }
     
     public update(): void
@@ -89,6 +90,7 @@ export class ModeGame extends Mode
             }
         } else {
             if (boxDst < 0) {
+		this.env.playSound("sndBing");
                 this.points++;
                 this.nextBoxDx = this.getRandTrack();
                 this.nextBoxY = this.currY + 100 * (0.1 + Math.random());
