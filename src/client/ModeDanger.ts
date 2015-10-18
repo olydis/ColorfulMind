@@ -72,6 +72,7 @@ export class ModeDanger extends Mode
 				});
 			}
 		});
+		this.env.playSound("sndDA");
 	}
 	
 	public update(): void

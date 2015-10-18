@@ -26,6 +26,7 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 		super.init(container);
 		this.sensitivity = 0.5;
 		container.click(eo => this.sensitivity = eo.pageX / container.width());
+		this.env.playSound("sndRCF");
 	}
 
 	public processImage(imageData: ImageData)
