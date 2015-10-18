@@ -19,13 +19,20 @@ export class Environment
     private cntover99: number = 0;
 
 	private freqByteData: Uint8Array;
-    
+	public latLong: Vector2D = { x: 0, y: 0 };
+	
     public constructor(
         public size: Vector2D, 
         public videoInput: HTMLVideoElement,
         private analyserNode: AnalyserNode)
     { 
         this.freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
+        
+		navigator.geolocation.watchPosition((position: any) =>
+		{        
+			this.latLong.y = position.coords.latitude;
+			this.latLong.x = position.coords.longitude;
+		});
 
 		window.addEventListener('deviceorientation', (event) => {
           var x = event.alpha;

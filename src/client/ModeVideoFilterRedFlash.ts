@@ -34,9 +34,9 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 				
 				var notRed = Math.max(g, b / 2);
 				var redness = saturate((r - notRed - 20) / (r + 1));
-				r *= 1 + (pulse - 0.5) * 1.7 * redness;
-				g *= 1 - pulse * 0.7 * redness;
-				b *= 1 - pulse * 0.7 * redness;
+				r *= 1 + (pulse - 0.5) * 3.7 * redness;
+				g *= 1 - pulse * 0.9 * redness;
+				b *= 1 - pulse * 0.9 * redness;
 				
 				raw[i + 0] = r;
 				raw[i + 1] = g;
