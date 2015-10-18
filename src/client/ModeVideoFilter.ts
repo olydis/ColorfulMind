@@ -27,6 +27,8 @@ export class ModeVideoFilter extends Mode
 	
 	public update(): void
 	{
+		if (!this.env.videoInput) return;
+
 		var context = this.context;
 		
         context.drawImage(this.env.videoInput, 0, 0, this.env.size.x, this.env.size.y);

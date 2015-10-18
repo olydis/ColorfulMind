@@ -50,24 +50,29 @@ $(() => {
     var video = <HTMLVideoElement>$("#inputVideo")[0];
     video.width = vWidth;
     video.height = vHeight;
-    
 
-    navigator.getUserMedia({ video: true }, 
-        stream => 
-        {
-            video.onloadedmetadata = ev =>
+    $("body").append($("<div>").text(!navigator.getUserMedia).css("color", "white"));
+    
+    if (!navigator.getUserMedia) {
+        main(new Environment({x: 300, y: 500}, undefined));
+    } else {
+        navigator.getUserMedia({ video: true }, 
+            stream => 
             {
-                main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video));
-            };
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        }, 
-        error => 
-        {
-            //environment.videoInput = null;
-            //main(environment);
-            window.alert(error);
-        });
+                video.onloadedmetadata = ev =>
+                {
+                    main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video));
+                };
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+            }, 
+            error => 
+            {
+                //environment.videoInput = null;
+                //main(environment);
+                window.alert(error);
+            });
+    }
 });
 
 // CALLED WHEN READY
