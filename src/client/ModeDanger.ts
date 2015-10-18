@@ -85,7 +85,8 @@ export class ModeDanger extends Mode
 			//	x.css("font-family", "monospace").css("font-size", "10px").text(JSON.stringify(this.env.latLong));
 		});
 		if (totalDanger > 1.9)
-			this.env.vibrate(50);
+			;
+			//this.env.vibrate(50);
 	}
 
 	public getTitle(): string

@@ -55,6 +55,6 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 	
 	public getTitle(): string
 	{
-		return "red emphasis";
+		return "red enhancement";
 	}
 }
