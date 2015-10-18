@@ -19,7 +19,6 @@ export class ModeGame extends Mode
     private yRate: number;
     private frameCount: number;
     private song: HTMLAudioElement;
-    private dead: boolean;
     private container: JQuery;
     private points: number;
 
@@ -44,7 +43,6 @@ export class ModeGame extends Mode
         this.yRate = 0.1;
         this.frameCount = 0;
         this.song = (<HTMLAudioElement>$("#gameSong")[0]);
-        this.dead = false;
 
         this.song.loop = true;
         this.song.play();
@@ -78,12 +76,9 @@ export class ModeGame extends Mode
 
         if (this.myDx == this.nextBoxDx) {
             if (boxDst < 0) { // HIT! -> gameover
-                if (!this.dead) {
-                    alert("Game over: " + this.points);
-                    this.container.children().remove();
-                    this.init(this.container);
-                    this.dead = true;
-                }
+                alert("Game over: " + this.points);
+                this.container.children().remove();
+                this.init(this.container); 
             } else {
                 this.song.volume = Math.min(boxDst / 100, 1);
             }
