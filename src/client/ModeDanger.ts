@@ -19,7 +19,7 @@ export class ModeDanger extends Mode
 		super(env);
 		this.detectors.push({
 			description: "suspicious acceleration",
-			dangerLevel: () => Math.random()
+			dangerLevel: () => env.getAccelDanger()
 		});
 		this.detectors.push({
 			description: "suspicious sounds",
@@ -34,7 +34,7 @@ export class ModeDanger extends Mode
 		this.detectors.push({
 			description: "suspicious movement",
 			dangerLevel: () => {
-				var danger: Vector2D = { y: 8.6506698, x: 53.1681188 };
+				var danger: Vector2D = { x: 8.6506698, y: 53.1681188 };
 				var loc: Vector2D = this.env.latLong;
 				var delta = { x: danger.x - loc.x, y: danger.y - loc.y };
 				return 1 - (delta.x * delta.x + delta.y * delta.y) * 1000;

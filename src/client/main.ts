@@ -51,43 +51,48 @@ $(() => {
     var video = <HTMLVideoElement>$("#inputVideo")[0];
     video.width = vWidth;
     video.height = vHeight;
+
+    $("body").append($("<div>").text(!navigator.getUserMedia).css("color", "white"));
     
-
-    navigator.getUserMedia({ video: true, audio: true }, 
-        stream => 
-        {
-            video.onloadedmetadata = ev =>
+    if (!navigator.getUserMedia) {
+        main(new Environment({x: 300, y: 500}, undefined, undefined));
+    } else {
+        navigator.getUserMedia({ video: true, audio: true }, 
+            stream => 
             {
-                var AudioContext: AudioContextConstructor = window.AudioContext || (<any>window).webkitAudioContext;
-                var audioContext = new AudioContext();
-                
-                var inputPoint = audioContext.createGain();
+                video.onloadedmetadata = ev =>
+                {
+                    var AudioContext: AudioContextConstructor = window.AudioContext || (<any>window).webkitAudioContext;
+                    var audioContext = new AudioContext();
+                    
+                    var inputPoint = audioContext.createGain();
 
-                // Create an AudioNode from the stream.
-                var realAudioInput = audioContext.createMediaStreamSource(stream);
-                var audioInput = realAudioInput;
-                audioInput.connect(inputPoint);
-            
-                var analyserNode = audioContext.createAnalyser();
-                analyserNode.fftSize = 256;
-                inputPoint.connect( analyserNode );
+                    // Create an AudioNode from the stream.
+                    var realAudioInput = audioContext.createMediaStreamSource(stream);
+                    var audioInput = realAudioInput;
+                    audioInput.connect(inputPoint);
                 
-                var zeroGain = audioContext.createGain();
-                zeroGain.gain.value = 0.0;
-                inputPoint.connect( zeroGain );
-                zeroGain.connect( audioContext.destination );
-                
-                main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video, analyserNode));
-            };
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        }, 
-        error => 
-        {
-            //environment.videoInput = null;
-            //main(environment);
-            window.alert(error);
-        });
+                    var analyserNode = audioContext.createAnalyser();
+                    analyserNode.fftSize = 256;
+                    inputPoint.connect( analyserNode );
+                    
+                    var zeroGain = audioContext.createGain();
+                    zeroGain.gain.value = 0.0;
+                    inputPoint.connect( zeroGain );
+                    zeroGain.connect( audioContext.destination );
+                    
+                    main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video, analyserNode));
+                };
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+            }, 
+            error => 
+            {
+                //environment.videoInput = null;
+                //main(environment);
+                window.alert(error);
+            });
+    }
 });
 
 // CALLED WHEN READY

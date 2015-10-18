@@ -4,7 +4,7 @@
 
 // config
 var confAppIp: string = "localhost";
-var confAppPort: number = 8080;
+var confAppPort: number = 8102;
 
 import express = require("express");
 
