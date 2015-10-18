@@ -27,6 +27,8 @@ var ModeDanger = ModeDangerTS.ModeDanger;
 import ModeVideoFilterRedFlashTS = require("ModeVideoFilterRedFlash");
 var ModeVideoFilterRedFlash = ModeVideoFilterRedFlashTS.ModeVideoFilterRedFlash;
 
+import ModeGameTS = require("ModeGame");
+var ModeGame = ModeGameTS.ModeGame;
 
 document.body.requestFullscreen = 
     document.body.requestFullscreen || 
@@ -100,6 +102,7 @@ function main(environment: Environment)
         new ModeVideoFilterSimRG(environment),
         new ModeVideoFilterSimCB(environment),
         new ModeDanger(environment),
+        new ModeGame(environment)
     ];
     var mode: Mode = null;
     var wrapper = $("<div>");
