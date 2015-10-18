@@ -148,7 +148,7 @@ function main(environment: Environment)
     transition(0);
     
     // SWIPE EVENTS
-    var xThresh = 50;
+    var xThresh = 100;
     var off = () => body.off("mousemove touchmove");
     body.on("mousedown touchstart", eo => {
         var startX = eo.pageX || (<any>eo.originalEvent).changedTouches[0].pageX;
