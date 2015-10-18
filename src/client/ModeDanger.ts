@@ -1,8 +1,9 @@
 /// <reference path="../decls/jquery.d.ts" />
 /// <reference path="Environment.ts" />
 
-import Environment = require("Environment");
-type Environment = Environment.Environment;
+import EnvironmentTS = require("Environment");
+type Environment = EnvironmentTS.Environment;
+var Environment = EnvironmentTS.Environment;
 
 import ModeTS = require("Mode");
 type Mode = ModeTS.Mode;
@@ -62,7 +63,7 @@ export class ModeDanger extends Mode
 			panel.text(detector.description);
 			container.append(panel);
 			
-			if (i == 3)
+			if (i == 4)
 			{
 				panel.click(() => 
 				{
@@ -79,7 +80,7 @@ export class ModeDanger extends Mode
 		this.detectors.forEach((detector, i) =>
 		{
 			var level = detector.dangerLevel();
-			totalDanger += level;
+			totalDanger += isNaN(level) ? 0 : level;
 			var x = $("p.detectorPanel").eq(i);
 			x
 				.css("background-color", "rgb(" + (saturate(level * 2) * 85 | 0) + ", " + (saturate(2 - level * 2) * 85 | 0) + ", 0)")
@@ -91,8 +92,7 @@ export class ModeDanger extends Mode
 			//	x.css("font-family", "monospace").css("font-size", "10px").text(JSON.stringify(this.env.latLong));
 		});
 		if (totalDanger > 1.9)
-			;
-			//this.env.vibrate(50);
+			this.env.playSound("sndAlarm");
 	}
 
 	public getTitle(): string

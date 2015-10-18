@@ -22,6 +22,12 @@ export class Environment
 	public latLong: Vector2D = { x: 0, y: 0 };
     public speed: number;
 	
+    public playSound(id: string): void
+    {
+        var audio = <HTMLAudioElement>$("#" + id)[0];
+        audio.play();
+    }
+    
     public constructor(
         public size: Vector2D, 
         public videoInput: HTMLVideoElement,
