@@ -144,7 +144,7 @@ function main(environment: Environment)
     };
     
     // HACK: make every mode fast (guess: firefox caller-dependent optimization)
-    $("audio").each((i, e: HTMLAudioElement) => e.muted = true);
+    $("audio").each((i: number, e: HTMLAudioElement) => e.muted = true);
     for (var i = 0; i < modes.length; i++)
     {
         wrapper.remove();
