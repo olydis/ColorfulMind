@@ -20,6 +20,7 @@ export class Environment
 
 	private freqByteData: Uint8Array;
 	public latLong: Vector2D = { x: 0, y: 0 };
+    public speed: number;
 	
     public constructor(
         public size: Vector2D, 
@@ -28,10 +29,11 @@ export class Environment
     { 
         this.freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
         
-		navigator.geolocation.watchPosition((position: any) =>
-		{        
+		navigator.geolocation.watchPosition((position: Position) =>
+		{
 			this.latLong.y = position.coords.latitude;
 			this.latLong.x = position.coords.longitude;
+            this.speed = position.coords.speed;
 		});
 
 		window.addEventListener('deviceorientation', (event) => {
@@ -65,8 +67,9 @@ export class Environment
 		this.analyserNode.getByteFrequencyData(this.freqByteData);
         var freqs = this.freqByteData; 
         var sum = freqs.reduce((a,b) => a+b, 0);
-        var high = freqs.slice(freqs.length / 2).reduce((a,b) => a + (b / 50 | 0), 0);
-        return (sum > 10000 ? 0.5 : 0) + (high > 5 ? 0.5 : 0);
+        var max = freqs.reduce((a,b) => Math.max(a, b), 0);
+        var highest = freqs.indexOf(max);
+        return (sum > 10000 ? 0.5 : 0) + (highest > freqs.length / 4 ? 0.5 : 0);
 	}
 
     public getAccelDanger(): number
