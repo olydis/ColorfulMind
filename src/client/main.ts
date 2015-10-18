@@ -3,6 +3,7 @@
 /// <reference path="../decls/socket.io-client.d.ts" />
 /// <reference path="../shared/include.ts" />
 /// <reference path="../decls/webrtc/MediaStream.d.ts" />
+/// <reference path="../decls/webaudioapi/waa.d.ts" />
 
 import $ = require("jquery");
 
@@ -54,14 +55,33 @@ $(() => {
     $("body").append($("<div>").text(!navigator.getUserMedia).css("color", "white"));
     
     if (!navigator.getUserMedia) {
-        main(new Environment({x: 300, y: 500}, undefined));
+        main(new Environment({x: 300, y: 500}, undefined, undefined));
     } else {
-        navigator.getUserMedia({ video: true }, 
+        navigator.getUserMedia({ video: true, audio: true }, 
             stream => 
             {
                 video.onloadedmetadata = ev =>
                 {
-                    main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video));
+                    var AudioContext: AudioContextConstructor = window.AudioContext || (<any>window).webkitAudioContext;
+                    var audioContext = new AudioContext();
+                    
+                    var inputPoint = audioContext.createGain();
+
+                    // Create an AudioNode from the stream.
+                    var realAudioInput = audioContext.createMediaStreamSource(stream);
+                    var audioInput = realAudioInput;
+                    audioInput.connect(inputPoint);
+                
+                    var analyserNode = audioContext.createAnalyser();
+                    analyserNode.fftSize = 256;
+                    inputPoint.connect( analyserNode );
+                    
+                    var zeroGain = audioContext.createGain();
+                    zeroGain.gain.value = 0.0;
+                    inputPoint.connect( zeroGain );
+                    zeroGain.connect( audioContext.destination );
+                    
+                    main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video, analyserNode));
                 };
                 video.src = window.URL.createObjectURL(stream);
                 video.play();
@@ -133,7 +153,7 @@ function main(environment: Environment)
     transition(0);
     
     // SWIPE EVENTS
-    var xThresh = 50;
+    var xThresh = 100;
     var off = () => body.off("mousemove touchmove");
     body.on("mousedown touchstart", eo => {
         var startX = eo.pageX || (<any>eo.originalEvent).changedTouches[0].pageX;

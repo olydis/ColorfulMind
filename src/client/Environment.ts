@@ -18,8 +18,15 @@ export class Environment
     private accelWindow: number[] = [];
     private cntover99: number = 0;
 
-	public constructor(public size: Vector2D, public videoInput: HTMLVideoElement)
-	{
+	private freqByteData: Uint8Array;
+    
+    public constructor(
+        public size: Vector2D, 
+        public videoInput: HTMLVideoElement,
+        private analyserNode: AnalyserNode)
+    { 
+        this.freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
+
 		window.addEventListener('deviceorientation', (event) => {
           var x = event.alpha;
           var y = event.beta;
@@ -44,6 +51,12 @@ export class Environment
           this.accelWindow.push(abs);
           while (this.accelWindow.length > 500) this.accelWindow.shift();
         });
+	}
+	
+	public getAudioFrequencies(): Uint8Array
+	{
+		this.analyserNode.getByteFrequencyData(this.freqByteData);
+		return this.freqByteData;
 	}
 
     public getAccelDanger(): number
