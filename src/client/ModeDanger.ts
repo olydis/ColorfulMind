@@ -42,6 +42,13 @@ export class ModeDanger extends Mode
 			}
 		});
 		this.detectors.push({
+			description: "running",
+			dangerLevel: () => {
+				var loc: Vector2D = this.evn.latLong;
+				
+			}
+		});
+		this.detectors.push({
 			description: "SOS button",
 			dangerLevel: () => 0
 		});
