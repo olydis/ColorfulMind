@@ -33,7 +33,12 @@ export class ModeDanger extends Mode
 		});
 		this.detectors.push({
 			description: "suspicious movement",
-			dangerLevel: () => Math.random()
+			dangerLevel: () => {
+				var danger: Vector2D = { y: 8.6506698, x: 53.1681188 };
+				var loc: Vector2D = this.env.latLong;
+				var delta = { x: danger.x - loc.x, y: danger.y - loc.y };
+				return 1 - (delta.x * delta.x + delta.y * delta.y) * 1000;
+			}
 		});
 		this.detectors.push({
 			description: "SOS button",
@@ -73,6 +78,8 @@ export class ModeDanger extends Mode
 				
 			if (i == 1)
 				x.css("font-family", "monospace").css("font-size", "10px").text(this.env.getAudioFrequencies().reduce((a, b) => a + b, 0) + " : " + this.env.getAudioFrequencies().reduce((a,b) => a + String.fromCharCode((b / 50 | 0) + 65), ""));
+			if (i == 2)
+				x.css("font-family", "monospace").css("font-size", "10px").text(JSON.stringify(this.env.latLong));
 		});
 	}
 

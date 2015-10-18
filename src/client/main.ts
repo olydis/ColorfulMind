@@ -97,12 +97,11 @@ function main(environment: Environment)
     
     // MODES
     var modes: Mode[] = [
-        new ModeDanger(environment),
         new ModeVideoFilterRedFlash(environment),
         //new ModeVideoFilterContrast(environment),
         new ModeVideoFilterSimRG(environment),
-        //new ModeVideoFilterSimCB(environment),
-        //new ModeVideoOverlayArrow(environment),
+        new ModeVideoFilterSimCB(environment),
+        new ModeDanger(environment),
     ];
     var mode: Mode = null;
     var wrapper = $("<div>");
@@ -136,7 +135,7 @@ function main(environment: Environment)
         });
     };
     
-    // HACK: make every fast (guess: firefox caller-dependent optimization)
+    // HACK: make every mode fast (guess: firefox caller-dependent optimization)
     for (var i = 0; i < modes.length; i++)
     {
         wrapper.remove();
@@ -158,12 +157,12 @@ function main(environment: Environment)
             var deltaX = currX - startX;
             if (deltaX < -xThresh)
             {
-                transition(modeIndex - 1);
+                transition(modeIndex + 1);
                 off();
             }
             if (deltaX > xThresh)
             {
-                transition(modeIndex + 1);
+                transition(modeIndex - 1);
                 off();
             }
         });
@@ -171,7 +170,7 @@ function main(environment: Environment)
     body.on("mouseup touchend", () => off());
     
 
-    body.click(() => { document.body.requestFullscreen(); flashCaption();  });
+    body.click(() => { document.body.requestFullscreen(); flashCaption(); });
     
     setInterval(() => 
     {
