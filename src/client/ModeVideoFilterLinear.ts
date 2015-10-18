@@ -43,6 +43,12 @@ export class ModeVideoFilterSimCB extends ModeVideoFilterLinear
 		]);
 	}
 	
+	public init(container: JQuery): void
+	{
+		super.init(container);
+		this.env.playSound("sndCB");
+	}
+	
 	public getTitle(): string
 	{
 		return "simulate total color blindness (achromatopsia)";
@@ -58,6 +64,12 @@ export class ModeVideoFilterSimRG extends ModeVideoFilterLinear
 			[0.3, 0.7, 0.0],
 			[0.0, 0.0, 1.0]
 		]);
+	}
+	
+	public init(container: JQuery): void
+	{
+		super.init(container);
+		this.env.playSound("sndRG");
 	}
 	
 	public getTitle(): string

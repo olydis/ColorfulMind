@@ -88,6 +88,11 @@ $(() => {
     }
 });
 
+window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+    alert("Error occured: " + errorMsg);//or any message
+    return false;
+}
+
 // CALLED WHEN READY
 function main(environment: Environment)
 {
@@ -113,6 +118,8 @@ function main(environment: Environment)
     };
     var transition = (index: number) =>
     {
+        $("audio").each((i: number, e: HTMLAudioElement) => { e.pause(); try { e.currentTime = 0; } catch (e) { } e.muted = false; });
+    
         modeIndex = ((index % modes.length) + modes.length) % modes.length;
         
         var oldWrapper = wrapper;
@@ -134,6 +141,7 @@ function main(environment: Environment)
     };
     
     // HACK: make every mode fast (guess: firefox caller-dependent optimization)
+    $("audio").each((i, e: HTMLAudioElement) => e.muted = true);
     for (var i = 0; i < modes.length; i++)
     {
         wrapper.remove();
