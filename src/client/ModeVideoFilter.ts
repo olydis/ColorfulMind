@@ -8,7 +8,7 @@ import ModeTS = require("Mode");
 type Mode = ModeTS.Mode;
 var Mode = ModeTS.Mode;
 
-export class ModeVideoFilter extends Mode
+export abstract class ModeVideoFilter extends Mode
 {
 	private context: CanvasRenderingContext2D;
 	
@@ -37,8 +37,5 @@ export class ModeVideoFilter extends Mode
         context.putImageData(imageData, 0, 0);
 	}
 	
-	public processImage(imageData: ImageData)
-	{
-		throw "VIRTUAL";
-	}
+	public abstract processImage(imageData: ImageData);
 }

@@ -3,23 +3,14 @@
 import Environment = require("Environment");
 type Environment = Environment.Environment;
 
-export class Mode
+export abstract class Mode
 {
 	public constructor(protected env: Environment)
 	{ }
 	
-	public init(container: JQuery): void
-	{
-		throw "VIRTUAL";
-	}
+	public abstract init(container: JQuery): void;
 	
-	public update(): void
-	{
-		throw "VIRTUAL";
-	}
-	
-	public getTitle(): string
-	{
-		throw "VIRTUAL";
-	}
+	public abstract update(): void;
+    
+	public abstract getTitle(): string;
 }

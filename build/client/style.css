@@ -12,7 +12,7 @@ body
     -o-user-select: none;
     user-select: none;
 }
-#inputVideo
+.offscreen
 {
     visibility: hidden;
     display: none;

@@ -7,28 +7,12 @@
 
 import $ = require("jquery");
 
-import EnvironmentTS = require("Environment");
-type Environment = EnvironmentTS.Environment;
-var Environment = EnvironmentTS.Environment;
-
-import ModeTS = require("Mode");
-type Mode = ModeTS.Mode;
-var Mode = ModeTS.Mode;
+import { Environment } from "Environment";
+import { Mode } from "Mode";
 
 // fix color vision
-import ModeVideoFilterLinear = require("ModeVideoFilterLinear");
-var ModeVideoFilterContrast = ModeVideoFilterLinear.ModeVideoFilterContrast;
-var ModeVideoFilterSimCB = ModeVideoFilterLinear.ModeVideoFilterSimCB;
-var ModeVideoFilterSimRG = ModeVideoFilterLinear.ModeVideoFilterSimRG;
-
-import ModeDangerTS = require("ModeDanger");
-var ModeDanger = ModeDangerTS.ModeDanger;
-
-import ModeVideoFilterRedFlashTS = require("ModeVideoFilterRedFlash");
-var ModeVideoFilterRedFlash = ModeVideoFilterRedFlashTS.ModeVideoFilterRedFlash;
-
-import ModeGameTS = require("ModeGame");
-var ModeGame = ModeGameTS.ModeGame;
+import { ModeVideoFilterContrast, ModeVideoFilterSimCB, ModeVideoFilterSimRG } from "ModeVideoFilterLinear";
+import { ModeVideoFilterRedFlash } from "ModeVideoFilterRedFlash";
 
 document.body.requestFullscreen = 
     document.body.requestFullscreen || 
@@ -49,51 +33,20 @@ $(() => {
     video.width = vWidth;
     video.height = vHeight;
     
-    if (!navigator.getUserMedia) {
-        main(new Environment({x: 300, y: 500}, undefined, undefined));
-    } else {
-        navigator.getUserMedia({ video: true, audio: true }, 
+    if (!navigator.getUserMedia) 
+        throw "no camera detected";
+    else
+        navigator.getUserMedia({ video: true, audio: false }, 
             stream => 
             {
-                video.onloadedmetadata = ev =>
-                {
-                    var AudioContext: AudioContextConstructor = window.AudioContext || (<any>window).webkitAudioContext;
-                    var audioContext = new AudioContext();
-                    
-                    var inputPoint = audioContext.createGain();
-
-                    // Create an AudioNode from the stream.
-                    var realAudioInput = audioContext.createMediaStreamSource(stream);
-                    var audioInput = realAudioInput;
-                    audioInput.connect(inputPoint);
-                
-                    var analyserNode = audioContext.createAnalyser();
-                    analyserNode.fftSize = 256;
-                    inputPoint.connect( analyserNode );
-                    
-                    var zeroGain = audioContext.createGain();
-                    zeroGain.gain.value = 0.0;
-                    inputPoint.connect( zeroGain );
-                    zeroGain.connect( audioContext.destination );
-                    
-                    main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video, analyserNode));
-                };
+                video.onloadedmetadata = () => main(new Environment({ x: video.videoWidth, y: video.videoHeight }, video));
                 video.src = window.URL.createObjectURL(stream);
                 video.play();
             }, 
-            error => 
-            {
-                //environment.videoInput = null;
-                //main(environment);
-                window.alert(error);
-            });
-    }
+            error => { throw "failed to access camera"; });
 });
 
-window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
-    alert("Error occured: " + errorMsg);//or any message
-    return false;
-}
+window.onerror = errorMsg => (alert("Unhandled error: " + errorMsg), false);
 
 // CALLED WHEN READY
 function main(environment: Environment)
@@ -105,9 +58,7 @@ function main(environment: Environment)
         new ModeVideoFilterRedFlash(environment),
         //new ModeVideoFilterContrast(environment),
         new ModeVideoFilterSimRG(environment),
-        new ModeVideoFilterSimCB(environment),
-        new ModeDanger(environment),
-        new ModeGame(environment)
+        new ModeVideoFilterSimCB(environment)
     ];
     var mode: Mode = null;
     var wrapper = $("<div>");
@@ -158,7 +109,8 @@ function main(environment: Environment)
     // SWIPE EVENTS
     var xThresh = 100;
     var off = () => body.off("mousemove touchmove");
-    body.on("mousedown touchstart", eo => {
+    body.on("mousedown touchstart", eo => 
+    {
         var startX = eo.pageX || (<any>eo.originalEvent).changedTouches[0].pageX;
         body.on("mousemove touchmove", eo =>
         {
@@ -179,7 +131,7 @@ function main(environment: Environment)
     body.on("mouseup touchend", () => off());
     
 
-    body.click(() => { document.body.requestFullscreen();/* flashCaption();*/ });
+    //body.click(() => { document.body.requestFullscreen(); });
     
     setInterval(() => 
     {

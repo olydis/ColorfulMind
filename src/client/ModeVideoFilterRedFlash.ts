@@ -26,7 +26,6 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 		super.init(container);
 		this.sensitivity = 0.5;
 		container.click(eo => this.sensitivity = eo.pageX / container.width());
-		this.env.playSound("sndRCF");
 	}
 
 	public processImage(imageData: ImageData)
@@ -35,6 +34,22 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 		var pulse = time / 300 % 2 < 1 ? 1 : 0; // Math.abs((time / 300) % 2 - 1); // [0..1]
 	
 		var raw = imageData.data;
+        
+        // var avgR: number = 0;
+        // var avgG: number = 0;
+        // var avgB: number = 0;
+		// for (var y = 0, i = 0; y < imageData.height; ++y)
+		// 	for (var x = 0; x < imageData.width; ++x, i += 4)
+        //     {
+		// 		avgR += raw[i + 0];
+		// 		avgG += raw[i + 1];
+		// 		avgB += raw[i + 2];
+        //     }
+        // avgR /= imageData.width * imageData.height;
+        // avgG /= imageData.width * imageData.height;
+        // avgB /= imageData.width * imageData.height;
+        // $("body").css("background", `rgb(${avgR | 0}, ${avgG | 0}, ${avgB | 0})`);
+
 		for (var y = 0, i = 0; y < imageData.height; ++y)
 			for (var x = 0; x < imageData.width; ++x, i += 4)
 			{
@@ -44,6 +59,7 @@ export class ModeVideoFilterRedFlash extends ModeVideoFilter
 				
 				var notRed = Math.max(g, b / 2);
 				var redness = saturate((r - notRed - 20) / (r + 1)) * this.sensitivity;
+                
 				r *= 1 + (pulse - 0.5) * 3.7 * redness;
 				g *= 1 - pulse * 0.9 * redness;
 				b *= 1 - pulse * 0.9 * redness;

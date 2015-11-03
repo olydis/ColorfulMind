@@ -1,6 +1,5 @@
 node_modules/
 .tscache/
-.vscode/
 npm-debug.log
 
 build/*
