@@ -11,7 +11,7 @@ import { Environment } from "Environment";
 import { Mode } from "Mode";
 
 // fix color vision
-import { ModeVideoFilterContrast, ModeVideoFilterSimCB, ModeVideoFilterSimRG } from "ModeVideoFilterLinear";
+import { ModeVideoFilterContrast, ModeVideoFilterSimCB, ModeVideoFilterSimProtanope, ModeVideoFilterSimDeuteranope, ModeVideoFilterSimTritanope, ModeVideoFilterDaltonize } from "ModeVideoFilterLinear";
 import { ModeVideoFilterRedFlash } from "ModeVideoFilterRedFlash";
 
 document.body.requestFullscreen = 
@@ -55,9 +55,12 @@ function main(environment: Environment)
     
     // MODES
     var modes: Mode[] = [
+        new ModeVideoFilterDaltonize(environment),
         new ModeVideoFilterRedFlash(environment),
         //new ModeVideoFilterContrast(environment),
-        new ModeVideoFilterSimRG(environment),
+        new ModeVideoFilterSimProtanope(environment),
+        new ModeVideoFilterSimDeuteranope(environment),
+        new ModeVideoFilterSimTritanope(environment),
         new ModeVideoFilterSimCB(environment)
     ];
     var mode: Mode = null;

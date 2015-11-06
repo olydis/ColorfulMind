@@ -37,5 +37,5 @@ export abstract class ModeVideoFilter extends Mode
         context.putImageData(imageData, 0, 0);
 	}
 	
-	public abstract processImage(imageData: ImageData);
+	public abstract processImage(imageData: ImageData): void;
 }
