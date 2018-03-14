@@ -1,5 +1,8 @@
 # ColorfulMind
 A simple video post-processor meant to make red stick out - which might be helpful for colorblind people. Created during jacobsHack2015.
+In short, **we continuously fade between two images differing in their saturation/brightness of red**, e.g.:
+
+![Example Scene](./example.jpg)
 
 ## Inspiration
 Some time ago we thought about color-blindness and realized how not being able to distinguish certain colors can actually be very dangerous. Especially red-green-blind people are facing a huge challenge in our society: Red is used as the color to express importance (warnings on packages, etc.), to attract attention (fire trucks, fire extinguishers, etc.). Green on the other hand occurs naturally in all sorts of places, is used a lot for packaging (Sprite, ...), and so on.
